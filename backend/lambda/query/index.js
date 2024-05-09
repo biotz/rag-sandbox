@@ -11,7 +11,7 @@ import middy from '@middy/core';
 import httpJsonBodyParser from '@middy/http-json-body-parser';
 import httpHeaderNormalizer from '@middy/http-header-normalizer';
 
-exports.handler = 
+exports.handler =
   middy()
   .use(httpJsonBodyParser())
   .use(httpHeaderNormalizer())
@@ -21,10 +21,10 @@ exports.handler =
       const input = {
         sessionId: requestSessionId,
         input: {
-          text: question, 
+          text: question,
         },
         retrieveAndGenerateConfiguration: {
-          type: "KNOWLEDGE_BASE", 
+          type: "KNOWLEDGE_BASE",
           knowledgeBaseConfiguration: {
             knowledgeBaseId: process.env.KNOWLEDGE_BASE_ID,
             //Claude Instant v1.2 is a fast, affordable yet still very capable model, which can handle a range of tasks including casual dialogue, text analysis, summarization, and document question-answering.
@@ -34,10 +34,10 @@ exports.handler =
       };
       const command = new RetrieveAndGenerateCommand(input);
       const response = await client.send(command);
-      const reference = response.citations[0]?.retrievedReferences[0]?.location.s3Location.uri;
+      const reference = response.citations;
       return makeResults(200, response.output.text, reference, response.sessionId);
     } catch (err) {
-      console.log(err);    
+      console.log(err);
       return makeResults(500, "Server side error: please check function logs",null,null);
     }
 });
@@ -53,5 +53,5 @@ function makeResults(statusCode,responseText,citationText,responseSessionId){
 		headers: {
 			'Access-Control-Allow-Origin': '*'
 		}
-	}; 
+	};
 }
